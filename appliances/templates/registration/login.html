@@ -1,0 +1,143 @@
+{% extends 'appliances/base.html' %}
+
+{% block content %}
+<article class="form-container">
+    <h2>Login</h2>
+    <form method="post" novalidate>
+        {% csrf_token %}
+        <p>
+            <label for="id_username">Username:</label>
+            <input type="text" name="username" id="id_username" required>
+        </p>
+        <p class="password-field">
+            <label for="id_password">Password:</label>
+            <div class="password-input-container">
+                <input type="password" name="password" id="id_password" required>
+                <button type="button" class="toggle-password" aria-label="Toggle password visibility">
+                    <span class="eye-icon">👁️</span>
+                </button>
+            </div>
+        </p>
+        <button type="submit" class="btn-primary">Login</button>
+    </form>
+</article>
+
+<style>
+    .form-container {
+        max-width: 400px;
+        margin: 0 auto;
+        background: #fefefe;
+        padding: 30px 35px;
+        border-radius: 12px;
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        color: #333;
+    }
+
+    .form-container h2 {
+        font-size: 1.8rem;
+        margin-bottom: 20px;
+        color: #2c3e50;
+        font-weight: 700;
+        text-align: center;
+    }
+
+    form p {
+        margin-bottom: 15px;
+    }
+
+    form p label {
+        display: block;
+        margin-bottom: 6px;
+        font-weight: 600;
+        color: #555;
+    }
+
+    form p input {
+        width: 100%;
+        padding: 10px 14px;
+        border: 1.8px solid #ccc;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-family: inherit;
+        transition: border-color 0.3s ease;
+    }
+
+    form p input:focus {
+        border-color: #3498db;
+        outline: none;
+        box-shadow: 0 0 8px rgba(52, 152, 219, 0.3);
+    }
+
+    .password-input-container {
+        position: relative;
+        display: flex;
+        align-items: center;
+    }
+
+    .password-input-container input {
+        padding-right: 40px; /* Space for the toggle button */
+    }
+
+    .toggle-password {
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 4px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0.7;
+        transition: opacity 0.3s ease;
+    }
+
+    .toggle-password:hover {
+        opacity: 1;
+    }
+
+    .eye-icon {
+        font-size: 1.2rem;
+        line-height: 1;
+    }
+
+    .btn-primary {
+        display: block;
+        width: 100%;
+        padding: 12px;
+        background-color: #3498db;
+        border: none;
+        color: white;
+        font-size: 1.1rem;
+        font-weight: 700;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        box-shadow: 0 3px 10px rgba(52, 152, 219, 0.5);
+        margin-top: 10px;
+    }
+
+    .btn-primary:hover {
+        background-color: #2980b9;
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const togglePassword = document.querySelector('.toggle-password');
+        const passwordInput = document.querySelector('#id_password');
+        
+        togglePassword.addEventListener('click', function() {
+            // Toggle the password visibility
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            
+            // Update the eye icon to indicate state
+            this.querySelector('.eye-icon').textContent = type === 'password' ? '👁️' : '👁️‍🗨️';
+        });
+    });
+</script>
+{% endblock %}

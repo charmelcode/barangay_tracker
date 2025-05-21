@@ -1,0 +1,104 @@
+{% extends 'appliances/base.html' %}
+
+{% block content %}
+<article class="form-container">
+    <h2>Register</h2>
+    <form method="post" novalidate>
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn-primary">Register</button>
+    </form>
+    <p class="text-center mt-15">
+        Already have an account? 
+        <a href="{% url 'login' %}" class="link-primary">Login</a>
+    </p>
+</article>
+
+<style>
+    .form-container {
+        max-width: 400px;
+        margin: 0 auto;
+        background: #fefefe;
+        padding: 30px 35px;
+        border-radius: 12px;
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        color: #333;
+    }
+
+    .form-container h2 {
+        font-size: 1.8rem;
+        margin-bottom: 20px;
+        color: #2c3e50;
+        font-weight: 700;
+        text-align: center;
+    }
+
+    form p {
+        margin-bottom: 15px;
+    }
+
+    form p label {
+        display: block;
+        margin-bottom: 6px;
+        font-weight: 600;
+        color: #555;
+    }
+
+    form p input {
+        width: 100%;
+        padding: 10px 14px;
+        border: 1.8px solid #ccc;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-family: inherit;
+        transition: border-color 0.3s ease;
+    }
+
+    form p input:focus {
+        border-color: #3498db;
+        outline: none;
+        box-shadow: 0 0 8px rgba(52, 152, 219, 0.3);
+    }
+
+    .btn-primary {
+        display: block;
+        width: 100%;
+        padding: 12px;
+        background-color: #3498db;
+        border: none;
+        color: white;
+        font-size: 1.1rem;
+        font-weight: 700;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        box-shadow: 0 3px 10px rgba(52, 152, 219, 0.5);
+        margin-top: 10px;
+    }
+
+    .btn-primary:hover {
+        background-color: #2980b9;
+    }
+
+    .text-center {
+        text-align: center;
+    }
+
+    .mt-15 {
+        margin-top: 15px;
+    }
+
+    .link-primary {
+        color: #3498db;
+        font-weight: 600;
+        text-decoration: none;
+        transition: color 0.3s ease;
+    }
+
+    .link-primary:hover {
+        color: #2980b9;
+        text-decoration: underline;
+    }
+</style>
+{% endblock %}

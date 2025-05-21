@@ -1,0 +1,102 @@
+{% extends 'appliances/base.html' %}
+
+{% block content %}
+<div class="return-confirmation">
+    <h2>Return Appliance</h2>
+    
+    <div class="info-box">
+        <h3>Return Details</h3>
+        <p><strong>Appliance:</strong> {{ borrow_request.appliance.name }}</p>
+        <p><strong>Quantity:</strong> {{ borrow_request.quantity }}</p>
+        <p><strong>Borrowed Date:</strong> {{ borrow_request.borrow_date }}</p>
+    </div>
+
+    <form method="POST" class="return-form">
+        {% csrf_token %}
+        <div class="button-group">
+            <button type="submit" class="btn-return">Confirm Return</button>
+            <a href="{% url 'my_borrow_requests' %}" class="btn-cancel">Cancel</a>
+        </div>
+    </form>
+</div>
+
+<style>
+    .return-confirmation {
+        max-width: 500px;
+        margin: 2rem auto;
+        padding: 2rem;
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+    }
+
+    h2 {
+        color: #2c3e50;
+        margin-bottom: 1.5rem;
+        font-size: 1.8rem;
+        font-weight: 700;
+    }
+
+    .info-box {
+        background: #f8f9fa;
+        border: 2px solid #e9ecef;
+        border-radius: 8px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .info-box h3 {
+        color: #2c3e50;
+        margin-bottom: 1rem;
+        font-size: 1.2rem;
+        font-weight: 600;
+    }
+
+    .info-box p {
+        margin: 0.5rem 0;
+        color: #495057;
+    }
+
+    .info-box p strong {
+        color: #2c3e50;
+        margin-right: 0.5rem;
+    }
+
+    .button-group {
+        display: flex;
+        gap: 1rem;
+        justify-content: flex-start;
+    }
+
+    .btn-return {
+        background: linear-gradient(135deg, #27ae60, #219a52);
+        color: white;
+        border: none;
+        padding: 12px 24px;
+        border-radius: 6px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .btn-return:hover {
+        background: linear-gradient(135deg, #219a52, #1e8449);
+        transform: translateY(-2px);
+    }
+
+    .btn-cancel {
+        background: #ecf0f1;
+        color: #34495e;
+        text-decoration: none;
+        padding: 12px 24px;
+        border-radius: 6px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    .btn-cancel:hover {
+        background: #bdc3c7;
+        transform: translateY(-2px);
+    }
+</style>
+{% endblock %} 

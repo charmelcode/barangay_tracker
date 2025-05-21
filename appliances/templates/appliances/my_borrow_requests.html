@@ -1,0 +1,221 @@
+{% extends 'appliances/base.html' %}
+
+{% block content %}
+
+<h2>My Borrow Requests</h2>
+
+{% if requests %}
+  <div class="request-grid">
+    {% for req in requests %}
+      <div class="request-card">
+        <h3>{{ req.appliance.name }}</h3>
+        <div class="request-details">
+          <p><strong>Quantity:</strong> {{ req.quantity }}</p>
+          <p><strong>Requested on:</strong> {{ req.borrow_date|date:"F d, Y" }}</p>
+        </div>
+        
+        <div class="status-area">
+          {% if req.approved and not req.return_date %}
+            <div class="status-badge approved">
+              Approved <span class="check">✓</span>
+            </div>
+            <a href="{% url 'return_appliance' req.id %}" class="btn-return">
+              Return Appliance
+            </a>
+          {% elif req.approved and req.return_date %}
+            <div class="status-badge returned">
+              Returned <span class="check">✓</span>
+            </div>
+            <p class="return-date">Returned on: {{ req.return_date|date:"F d, Y" }}</p>
+          {% elif req.declined %}
+            <div class="status-badge declined">
+              Declined <span class="cross">✕</span>
+            </div>
+          {% else %}
+            <div class="status-badge pending">
+              Pending <span class="pending-icon">⏳</span>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+{% else %}
+  <p class="no-requests">You have no borrow requests yet.</p>
+{% endif %}
+
+<a href="{% url 'home' %}" class="btn-back">⬅ Back to Home</a>
+
+<style>
+  h2 {
+    color: #2c3e50;
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 2rem;
+  }
+
+  .request-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+    padding: 1rem 0;
+  }
+
+  .request-card {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .request-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+  }
+
+  .request-card h3 {
+    color: #2c3e50;
+    font-size: 1.4rem;
+    margin-bottom: 1rem;
+    font-weight: 600;
+  }
+
+  .request-details {
+    margin-bottom: 1.5rem;
+  }
+
+  .request-details p {
+    margin: 0.5rem 0;
+    color: #555;
+  }
+
+  .request-details strong {
+    color: #34495e;
+  }
+
+  .status-area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .status-badge {
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .status-badge.approved {
+    background-color: #e8f5e9;
+    color: #2e7d32;
+  }
+
+  .status-badge.declined {
+    background-color: #ffebee;
+    color: #c62828;
+  }
+
+  .status-badge.pending {
+    background-color: #fff3e0;
+    color: #ef6c00;
+  }
+
+  .status-badge.returned {
+    background-color: #e3f2fd;
+    color: #1565c0;
+  }
+
+  .btn-return {
+    display: inline-block;
+    padding: 0.8rem 1.5rem;
+    background: linear-gradient(135deg, #27ae60, #219a52);
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    text-align: center;
+    width: 100%;
+    max-width: 200px;
+    box-shadow: 0 4px 6px rgba(39, 174, 96, 0.2);
+  }
+
+  .btn-return:hover {
+    background: linear-gradient(135deg, #219a52, #1e8449);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(39, 174, 96, 0.3);
+  }
+
+  .return-date {
+    color: #666;
+    font-size: 0.9rem;
+    font-style: italic;
+  }
+
+  .btn-back {
+    display: inline-block;
+    margin-top: 2rem;
+    padding: 0.8rem 1.5rem;
+    color: #2c3e50;
+    text-decoration: none;
+    font-weight: 600;
+    border: 2px solid #2c3e50;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+  }
+
+  .btn-back:hover {
+    background: #2c3e50;
+    color: white;
+    transform: translateY(-2px);
+  }
+
+  .no-requests {
+    text-align: center;
+    color: #666;
+    font-style: italic;
+    padding: 2rem;
+    background: #f8f9fa;
+    border-radius: 8px;
+  }
+
+  .check {
+    font-weight: bold;
+  }
+
+  .cross {
+    font-weight: bold;
+    font-size: 1.1em;
+  }
+
+  .pending-icon {
+    font-size: 1.1em;
+  }
+</style>
+
+<script>
+  // Ripple effect on back button
+  document.querySelectorAll('a.btn-back').forEach(el => {
+    el.addEventListener('click', function (e) {
+      const rect = el.getBoundingClientRect();
+      const ripple = document.createElement('span');
+      ripple.classList.add('ripple');
+      ripple.style.width = ripple.style.height = Math.max(rect.width, rect.height) + 'px';
+      ripple.style.left = (e.clientX - rect.left - ripple.offsetWidth / 2) + 'px';
+      ripple.style.top = (e.clientY - rect.top - ripple.offsetHeight / 2) + 'px';
+
+      el.appendChild(ripple);
+
+      ripple.addEventListener('animationend', () => {
+        ripple.remove();
+      });
+    });
+  });
+</script>
+
+{% endblock %}

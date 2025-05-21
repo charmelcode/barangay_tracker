@@ -1,0 +1,239 @@
+{% extends 'appliances/base.html' %}
+
+{% block content %}
+<div class="borrow-container">
+    <h2>Borrow Request: {{ appliance.name }}</h2>
+
+    <div class="appliance-info">
+        <h3>Appliance Details</h3>
+        <p class="description">{{ appliance.description }}</p>
+        <p class="availability">Available Quantity: {{ appliance.quantity }}</p>
+    </div>
+
+    <form method="POST" class="borrow-form" novalidate>
+        {% csrf_token %}
+        
+        <div class="form-section">
+            <h3>Borrower Information</h3>
+            <div class="form-group">
+                <label for="{{ form.full_name.id_for_label }}">Full Name:</label>
+                {{ form.full_name }}
+                {% if form.full_name.errors %}
+                    <div class="error-message">{{ form.full_name.errors.0 }}</div>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.contact_number.id_for_label }}">Contact Number:</label>
+                {{ form.contact_number }}
+                {% if form.contact_number.errors %}
+                    <div class="error-message">{{ form.contact_number.errors.0 }}</div>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.location.id_for_label }}">Location:</label>
+                {{ form.location }}
+                {% if form.location.errors %}
+                    <div class="error-message">{{ form.location.errors.0 }}</div>
+                {% endif %}
+                <small class="help-text">{{ form.location.help_text }}</small>
+            </div>
+        </div>
+
+        <div class="form-section">
+            <h3>Borrow Details</h3>
+            <div class="form-group">
+                <label for="{{ form.quantity.id_for_label }}">Quantity:</label>
+                {{ form.quantity }}
+                {% if form.quantity.errors %}
+                    <div class="error-message">{{ form.quantity.errors.0 }}</div>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.planned_borrow_date.id_for_label }}">Planned Borrow Date:</label>
+                {{ form.planned_borrow_date }}
+                {% if form.planned_borrow_date.errors %}
+                    <div class="error-message">{{ form.planned_borrow_date.errors.0 }}</div>
+                {% endif %}
+                <small class="help-text">{{ form.planned_borrow_date.help_text }}</small>
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.planned_return_date.id_for_label }}">Planned Return Date:</label>
+                {{ form.planned_return_date }}
+                {% if form.planned_return_date.errors %}
+                    <div class="error-message">{{ form.planned_return_date.errors.0 }}</div>
+                {% endif %}
+                <small class="help-text">{{ form.planned_return_date.help_text }}</small>
+            </div>
+        </div>
+
+        {% if form.non_field_errors %}
+            <div class="error-message form-wide-error">
+                {{ form.non_field_errors.0 }}
+            </div>
+        {% endif %}
+
+        <div class="form-actions">
+            <button type="submit" class="btn-submit">Submit Request</button>
+            <a href="{% url 'category_appliances' appliance.category.id %}" class="btn-cancel">Cancel</a>
+        </div>
+    </form>
+</div>
+
+<style>
+    .borrow-container {
+        max-width: 800px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+    }
+
+    h2 {
+        color: #2c3e50;
+        font-size: 2rem;
+        font-weight: 700;
+        margin-bottom: 1.5rem;
+    }
+
+    .appliance-info {
+        background: #f8f9fa;
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+        border: 2px solid #e9ecef;
+    }
+
+    .appliance-info h3 {
+        color: #2c3e50;
+        font-size: 1.3rem;
+        margin-bottom: 1rem;
+    }
+
+    .appliance-info .description {
+        color: #495057;
+        margin-bottom: 0.8rem;
+        line-height: 1.5;
+    }
+
+    .appliance-info .availability {
+        color: #2c3e50;
+        font-weight: 600;
+    }
+
+    .form-section {
+        background: white;
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .form-section h3 {
+        color: #2c3e50;
+        font-size: 1.2rem;
+        margin-bottom: 1.2rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid #e9ecef;
+    }
+
+    .form-group {
+        margin-bottom: 1.2rem;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        color: #495057;
+        font-weight: 600;
+    }
+
+    .form-group input,
+    .form-group textarea {
+        width: 100%;
+        padding: 0.8rem 1rem;
+        border: 2px solid #ced4da;
+        border-radius: 8px;
+        font-size: 1rem;
+        transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus {
+        border-color: #4dabf7;
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(77, 171, 247, 0.2);
+    }
+
+    .help-text {
+        display: block;
+        margin-top: 0.4rem;
+        color: #6c757d;
+        font-size: 0.9rem;
+    }
+
+    .error-message {
+        color: #dc3545;
+        font-size: 0.9rem;
+        margin-top: 0.4rem;
+    }
+
+    .form-wide-error {
+        background: #fff5f5;
+        padding: 1rem;
+        border-radius: 8px;
+        margin-bottom: 1rem;
+        border: 1px solid #dc3545;
+    }
+
+    .form-actions {
+        display: flex;
+        gap: 1rem;
+        margin-top: 2rem;
+    }
+
+    .btn-submit {
+        padding: 0.8rem 2rem;
+        background: linear-gradient(135deg, #4dabf7, #3c8ce7);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .btn-submit:hover {
+        background: linear-gradient(135deg, #3c8ce7, #2b7dd2);
+        transform: translateY(-2px);
+    }
+
+    .btn-cancel {
+        padding: 0.8rem 2rem;
+        background: #e9ecef;
+        color: #495057;
+        text-decoration: none;
+        border-radius: 8px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    .btn-cancel:hover {
+        background: #dee2e6;
+        transform: translateY(-2px);
+    }
+
+    @media (max-width: 576px) {
+        .form-actions {
+            flex-direction: column;
+        }
+
+        .btn-submit,
+        .btn-cancel {
+            width: 100%;
+            text-align: center;
+        }
+    }
+</style>
+{% endblock %}
