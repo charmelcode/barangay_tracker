@@ -1,0 +1,232 @@
+{% extends 'appliances/base.html' %}
+
+{% block content %}
+<h2 style="color:#2c3e50; font-weight:700; margin-bottom: 1.2rem;">Pending Borrow Requests</h2>
+
+<p><a href="{% url 'add_appliance' %}" class="btn-primary">➕ Add New Appliance</a></p>
+
+{% if requests %}
+<ul style="list-style:none; padding-left:0; margin-top: 1rem;">
+    {% for request in requests %}
+    <li style="
+        background-color: #f9f9f9;
+        border-radius: 10px;
+        padding: 1rem 1.2rem;
+        margin-bottom: 1rem;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        color: #333;
+        font-size: 1rem;
+    ">
+        <strong>{{ request.user.username }}</strong> wants to borrow
+        <strong>{{ request.quantity }}</strong> of
+        <strong>{{ request.appliance.name }}</strong><br>
+        <small style="color:#555;">Requested on: {{ request.borrow_date }}</small><br>
+
+        <form action="{% url 'approve_borrow_request' request.id %}" method="post" style="display:inline;">
+            {% csrf_token %}
+            <button type="submit" class="btn-approve ripple">✅ Approve</button>
+        </form>
+
+        <form action="{% url 'decline_borrow_request' request.id %}" method="post" style="display:inline;">
+            {% csrf_token %}
+            <button type="submit" class="btn-decline ripple">❌ Decline</button>
+        </form>
+    </li>
+    {% endfor %}
+</ul>
+{% else %}
+<p style="color:#555; font-style: italic;">No pending requests.</p>
+{% endif %}
+
+<p><a href="{% url 'home' %}" class="btn-link ripple">⬅ Back to Home</a></p>
+
+<style>
+/* Ripple effect setup */
+.ripple {
+    position: relative;
+    overflow: hidden;
+}
+
+.ripple::after {
+    content: "";
+    position: absolute;
+    border-radius: 50%;
+    width: 100px;
+    height: 100px;
+    background: rgba(255, 255, 255, 0.4);
+    opacity: 0;
+    pointer-events: none;
+    transform: scale(0);
+    animation: ripple-effect 0.6s linear;
+}
+
+.ripple:active::after {
+    opacity: 1;
+    transform: scale(1);
+    animation-name: ripple-effect;
+}
+
+@keyframes ripple-effect {
+    from {
+        transform: scale(0);
+        opacity: 0.6;
+    }
+    to {
+        transform: scale(2.5);
+        opacity: 0;
+    }
+}
+
+/* Buttons base styles */
+.btn-primary,
+.btn-approve,
+.btn-decline,
+.btn-link {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-weight: 600;
+    border-radius: 8px;
+    padding: 12px 20px;
+    cursor: pointer;
+    user-select: none;
+    display: inline-block;
+    text-decoration: none;
+    text-align: center;
+    position: relative;
+    transition:
+        background 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+        box-shadow 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+        transform 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: transform, background, box-shadow;
+    outline-offset: 3px;
+}
+
+/* Focus outline for accessibility */
+.btn-primary:focus-visible,
+.btn-approve:focus-visible,
+.btn-decline:focus-visible,
+.btn-link:focus-visible {
+    outline: 3px solid #2980b9;
+    outline-offset: 4px;
+}
+
+/* Add New Appliance button */
+.btn-primary {
+    background: linear-gradient(135deg, #5dade2, #2874a6);
+    color: white;
+    box-shadow: 0 6px 12px rgba(41, 128, 185, 0.5);
+}
+.btn-primary:hover {
+    background: linear-gradient(135deg, #2874a6, #1b4f72);
+    box-shadow: 0 8px 16px rgba(27, 79, 114, 0.7), 0 0 8px #1b4f72aa;
+    transform: translateY(-3px);
+}
+.btn-primary:active {
+    background: linear-gradient(135deg, #1b4f72, #145374);
+    box-shadow: 0 4px 8px rgba(20, 83, 116, 0.9);
+    transform: scale(0.96);
+}
+
+/* Approve button */
+.btn-approve {
+    background: linear-gradient(135deg, #2ecc71, #27ae60);
+    border: none;
+    color: white;
+    margin-top: 0.5rem;
+    margin-right: 0.5rem;
+    padding: 10px 18px;
+    box-shadow: 0 6px 12px rgba(39, 174, 96, 0.5);
+}
+.btn-approve:hover {
+    background: linear-gradient(135deg, #27ae60, #1e8449);
+    box-shadow: 0 8px 16px rgba(30, 132, 73, 0.7), 0 0 8px #1e844999;
+    transform: translateY(-2px);
+}
+.btn-approve:active {
+    background: linear-gradient(135deg, #1e8449, #166536);
+    box-shadow: 0 4px 8px rgba(22, 101, 54, 0.9);
+    transform: scale(0.96);
+}
+
+/* Decline button */
+.btn-decline {
+    background: linear-gradient(135deg, #e74c3c, #c0392b);
+    border: none;
+    color: white;
+    margin-top: 0.5rem;
+    padding: 10px 18px;
+    box-shadow: 0 6px 12px rgba(231, 76, 60, 0.5);
+}
+.btn-decline:hover {
+    background: linear-gradient(135deg, #c0392b, #912d24);
+    box-shadow: 0 8px 16px rgba(145, 45, 36, 0.7), 0 0 8px #912d24aa;
+    transform: translateY(-2px);
+}
+.btn-decline:active {
+    background: linear-gradient(135deg, #912d24, #6e241c);
+    box-shadow: 0 4px 8px rgba(110, 36, 28, 0.9);
+    transform: scale(0.96);
+}
+
+/* Back to Home link */
+.btn-link {
+    background: linear-gradient(135deg, #5dade2, #2874a6);
+    color: #ffffff;
+    margin-top: 2rem;
+    text-decoration: none;
+    font-weight: 600;
+}
+.btn-link:hover {
+    text-decoration: underline;
+    color: #ffffff;
+    box-shadow: 0 8px 16px rgba(30, 132, 73, 0.7), 0 0 8px #1e844999;
+    transform: translateY(-2px);
+}
+.btn-link:active {
+    color: #073049;
+    box-shadow: 0 4px 8px rgba(22, 101, 54, 0.9);
+    transform: scale(0.96);
+}
+
+</style>
+
+<script>
+  // Optional: Improve ripple effect by dynamically positioning the ripple based on click position
+  document.querySelectorAll('.ripple').forEach(btn => {
+    btn.addEventListener('click', function(e) {
+      const circle = document.createElement('span');
+      circle.classList.add('ripple-circle');
+      const rect = btn.getBoundingClientRect();
+      const size = Math.max(rect.width, rect.height);
+      const x = e.clientX - rect.left - size / 2;
+      const y = e.clientY - rect.top - size / 2;
+      circle.style.width = circle.style.height = size + 'px';
+      circle.style.left = x + 'px';
+      circle.style.top = y + 'px';
+      btn.appendChild(circle);
+      setTimeout(() => circle.remove(), 600);
+    });
+  });
+</script>
+
+<style>
+  /* Ripple dynamic circle */
+  .ripple-circle {
+    position: absolute;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.5);
+    animation: ripple-circle-animation 0.6s linear;
+    pointer-events: none;
+    transform: scale(0);
+    opacity: 1;
+    z-index: 10;
+  }
+
+  @keyframes ripple-circle-animation {
+    to {
+      transform: scale(2.5);
+      opacity: 0;
+    }
+  }
+</style>
+
+{% endblock %}

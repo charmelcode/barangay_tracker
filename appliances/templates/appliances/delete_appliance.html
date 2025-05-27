@@ -1,0 +1,95 @@
+{% extends 'appliances/base.html' %}
+
+{% block content %}
+<div class="delete-confirmation">
+    <h2>Delete Appliance</h2>
+    
+    <div class="warning-box">
+        <p class="warning-text">Are you sure you want to delete "{{ appliance.name }}"?</p>
+        <p class="details">This action cannot be undone.</p>
+    </div>
+
+    <form method="POST" class="delete-form">
+        {% csrf_token %}
+        <div class="button-group">
+            <button type="submit" class="btn-delete">Delete Appliance</button>
+            <a href="{% url 'category_appliances' appliance.category.id %}" class="btn-cancel">Cancel</a>
+        </div>
+    </form>
+</div>
+
+<style>
+    .delete-confirmation {
+        max-width: 500px;
+        margin: 2rem auto;
+        padding: 2rem;
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+    }
+
+    h2 {
+        color: #e74c3c;
+        margin-bottom: 1.5rem;
+        font-size: 1.8rem;
+        font-weight: 700;
+    }
+
+    .warning-box {
+        background: #fff5f5;
+        border: 2px solid #fad7d7;
+        border-radius: 8px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .warning-text {
+        color: #c0392b;
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+    }
+
+    .details {
+        color: #666;
+        font-size: 0.95rem;
+    }
+
+    .button-group {
+        display: flex;
+        gap: 1rem;
+        justify-content: flex-start;
+    }
+
+    .btn-delete {
+        background: linear-gradient(135deg, #e74c3c, #c0392b);
+        color: white;
+        border: none;
+        padding: 12px 24px;
+        border-radius: 6px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .btn-delete:hover {
+        background: linear-gradient(135deg, #c0392b, #962d22);
+        transform: translateY(-2px);
+    }
+
+    .btn-cancel {
+        background: #ecf0f1;
+        color: #34495e;
+        text-decoration: none;
+        padding: 12px 24px;
+        border-radius: 6px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    .btn-cancel:hover {
+        background: #bdc3c7;
+        transform: translateY(-2px);
+    }
+</style>
+{% endblock %} 

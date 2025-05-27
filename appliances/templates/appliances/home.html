@@ -1,0 +1,149 @@
+{% extends 'appliances/base.html' %}
+
+{% block content %}
+<main class="container">
+  {% if messages %}
+  <ul class="messages">
+    {% for message in messages %}
+    <li class="message {{ message.tags }}">{{ message }}</li>
+    {% endfor %}
+  </ul>
+  {% endif %}
+
+  <h2>Appliance Categories</h2>
+
+  {% if user.is_authenticated %}
+    {% if not user.is_staff %}
+      <p class="action-link">📋 <a href="{% url 'my_borrow_requests' %}">View My Borrow Requests</a></p>
+    {% else %}
+      <div class="admin-actions">
+        <p class="action-link">🔧 <a href="{% url 'borrow_requests_list' %}">Manage Borrow Requests</a></p>
+        <p class="action-link">👥 <a href="{% url 'borrowers_list' %}">View All Borrowers</a></p>
+      </div>
+    {% endif %}
+  {% endif %}
+
+  <ul class="category-list">
+    {% for category in categories %}
+      <li><a href="{% url 'category_appliances' category.id %}">{{ category.name }}</a></li>
+    {% endfor %}
+  </ul>
+</main>
+
+<style>
+  .container {
+    max-width: 650px;
+    margin: 30px auto 60px auto;
+    padding: 20px 25px;
+    background: #fff;
+    border-radius: 14px;
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.1);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #2c3e50;
+  }
+
+  h2 {
+    font-weight: 700;
+    font-size: 2rem;
+    margin-bottom: 25px;
+    text-align: center;
+  }
+
+  .messages {
+    list-style: none;
+    padding: 0;
+    margin-bottom: 25px;
+  }
+
+  .message {
+    padding: 15px 18px;
+    border-radius: 10px;
+    margin-bottom: 12px;
+    font-weight: 600;
+    font-size: 1rem;
+  }
+
+  .message.info {
+    background-color: #d1ecf1;
+    color: #0c5460;
+    border: 1.5px solid #bee5eb;
+  }
+
+  .message.success {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1.5px solid #c3e6cb;
+  }
+
+  .message.warning {
+    background-color: #fff3cd;
+    color: #856404;
+    border: 1.5px solid #ffeeba;
+  }
+
+  .message.error, .message.danger {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1.5px solid #f5c6cb;
+  }
+
+  .admin-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 25px;
+  }
+
+  .action-link {
+    font-size: 1.1rem;
+    font-weight: 600;
+    text-align: center;
+  }
+
+  .action-link a {
+    text-decoration: none;
+    color: #3498db;
+    transition: color 0.3s ease;
+  }
+
+  .action-link a:hover {
+    color: #2980b9;
+    text-decoration: underline;
+  }
+
+  .category-list {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 18px;
+    justify-content: center;
+  }
+
+  .category-list li {
+    background: #ecf0f1;
+    padding: 14px 20px;
+    border-radius: 12px;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
+    font-size: 1.1rem;
+    font-weight: 600;
+    transition: background-color 0.3s ease;
+    min-width: 140px;
+    text-align: center;
+  }
+
+  .category-list li a {
+    color: #2c3e50;
+    text-decoration: none;
+    display: block;
+  }
+
+  .category-list li:hover {
+    background-color: #3498db;
+  }
+
+  .category-list li:hover a {
+    color: white;
+  }
+</style>
+{% endblock %}

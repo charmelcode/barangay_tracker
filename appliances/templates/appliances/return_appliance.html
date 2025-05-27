@@ -1,0 +1,249 @@
+{% extends 'appliances/base.html' %}
+
+{% block content %}
+<div class="return-confirmation">
+    <h2>Return Appliance</h2>
+    
+    <div class="info-box">
+        <h3>Return Details</h3>
+        <p><strong>Appliance:</strong> {{ borrow_request.appliance.name }}</p>
+        <p><strong>Total Borrowed:</strong> {{ borrow_request.quantity }}</p>
+        <p><strong>Already Returned:</strong> {{ borrow_request.returned_quantity }}</p>
+        <p><strong>Remaining to Return:</strong> {{ borrow_request.unreturned_quantity }}</p>
+        <p><strong>Borrowed Date:</strong> {{ borrow_request.borrow_date }}</p>
+    </div>
+
+    <form method="POST" class="return-form" id="returnForm">
+        {% csrf_token %}
+        
+        <div class="bulk-return-section">
+            <h3>Quick Return</h3>
+            <div class="form-group">
+                <label>All items are in good condition?</label>
+                <div class="quick-return-options">
+                    <button type="button" class="btn-quick-return" id="allGood">Yes, all items are good</button>
+                    <button type="button" class="btn-quick-return" id="someDamaged">No, some items are damaged/lost</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="damage-section" id="damageSection" style="display: none;">
+            <h3>Damage Report</h3>
+            <div class="form-group">
+                <label>Number of damaged/lost items:</label>
+                <input type="number" id="damagedCount" name="damaged_count" min="1" max="{{ borrow_request.unreturned_quantity }}" class="form-input">
+            </div>
+            <div id="damageDetails" style="display: none;">
+                <div class="form-group">
+                    <label>Resolution for damaged items:</label>
+                    <select name="damage_resolution" class="form-select">
+                        <option value="replaced">Will Replace</option>
+                        <option value="paid">Will Pay</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Additional Notes: (Optional)</label>
+                    <textarea name="damage_notes" rows="3" class="form-textarea" 
+                            placeholder="Describe the damage and any additional details..."></textarea>
+                </div>
+            </div>
+        </div>
+
+        <div class="button-group">
+            <button type="submit" class="btn-return">Confirm Return</button>
+            <a href="{% url 'my_borrow_requests' %}" class="btn-cancel">Cancel</a>
+        </div>
+    </form>
+</div>
+
+<style>
+    .return-confirmation {
+        max-width: 800px;
+        margin: 2rem auto;
+        padding: 2rem;
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+    }
+
+    h2, h3 {
+        color: #2c3e50;
+        margin-bottom: 1.5rem;
+    }
+
+    h2 { font-size: 1.8rem; font-weight: 700; }
+    h3 { font-size: 1.4rem; font-weight: 600; }
+
+    .info-box {
+        background: #f8f9fa;
+        border: 2px solid #e9ecef;
+        border-radius: 8px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .info-box p {
+        margin: 0.5rem 0;
+        color: #495057;
+    }
+
+    .info-box p strong {
+        color: #2c3e50;
+        margin-right: 0.5rem;
+    }
+
+    .bulk-return-section, .damage-section {
+        background: #f8f9fa;
+        border: 2px solid #e9ecef;
+        border-radius: 8px;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .quick-return-options {
+        display: flex;
+        gap: 1rem;
+        margin-top: 0.5rem;
+    }
+
+    .btn-quick-return {
+        flex: 1;
+        padding: 1rem;
+        border: 2px solid #e9ecef;
+        border-radius: 6px;
+        background: white;
+        color: #2c3e50;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .btn-quick-return:hover {
+        background: #f8f9fa;
+        border-color: #27ae60;
+    }
+
+    .btn-quick-return.active {
+        background: #27ae60;
+        border-color: #27ae60;
+        color: white;
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        color: #2c3e50;
+        font-weight: 600;
+    }
+
+    .form-input, .form-select, .form-textarea {
+        width: 100%;
+        padding: 0.75rem;
+        border: 2px solid #e9ecef;
+        border-radius: 6px;
+        font-size: 1rem;
+        transition: border-color 0.3s ease;
+    }
+
+    .form-input:focus, .form-select:focus, .form-textarea:focus {
+        border-color: #27ae60;
+        outline: none;
+    }
+
+    .button-group {
+        display: flex;
+        gap: 1rem;
+        margin-top: 2rem;
+    }
+
+    .btn-return {
+        background: linear-gradient(135deg, #27ae60, #219a52);
+        color: white;
+        border: none;
+        padding: 12px 24px;
+        border-radius: 6px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .btn-return:hover {
+        background: linear-gradient(135deg, #219a52, #1e8449);
+        transform: translateY(-2px);
+    }
+
+    .btn-cancel {
+        background: #ecf0f1;
+        color: #34495e;
+        text-decoration: none;
+        padding: 12px 24px;
+        border-radius: 6px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    .btn-cancel:hover {
+        background: #bdc3c7;
+        transform: translateY(-2px);
+    }
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const allGoodBtn = document.getElementById('allGood');
+    const someDamagedBtn = document.getElementById('someDamaged');
+    const damageSection = document.getElementById('damageSection');
+    const damageDetails = document.getElementById('damageDetails');
+    const damagedCount = document.getElementById('damagedCount');
+    const returnForm = document.getElementById('returnForm');
+
+    allGoodBtn.addEventListener('click', function() {
+        allGoodBtn.classList.add('active');
+        someDamagedBtn.classList.remove('active');
+        damageSection.style.display = 'none';
+        
+        // Add hidden input for all good items
+        const hiddenInput = document.createElement('input');
+        hiddenInput.type = 'hidden';
+        hiddenInput.name = 'all_good';
+        hiddenInput.value = 'true';
+        returnForm.appendChild(hiddenInput);
+    });
+
+    someDamagedBtn.addEventListener('click', function() {
+        someDamagedBtn.classList.add('active');
+        allGoodBtn.classList.remove('active');
+        damageSection.style.display = 'block';
+        
+        // Remove hidden input if exists
+        const hiddenInput = returnForm.querySelector('input[name="all_good"]');
+        if (hiddenInput) hiddenInput.remove();
+    });
+
+    damagedCount.addEventListener('input', function() {
+        if (this.value > 0) {
+            damageDetails.style.display = 'block';
+        } else {
+            damageDetails.style.display = 'none';
+        }
+    });
+
+    returnForm.addEventListener('submit', function(e) {
+        const allGoodSelected = allGoodBtn.classList.contains('active');
+        const someDamagedSelected = someDamagedBtn.classList.contains('active');
+        
+        if (!allGoodSelected && !someDamagedSelected) {
+            e.preventDefault();
+            alert('Please select whether all items are good or some are damaged.');
+        } else if (someDamagedSelected && (!damagedCount.value || damagedCount.value < 1)) {
+            e.preventDefault();
+            alert('Please enter the number of damaged items.');
+        }
+    });
+});
+</script>
+{% endblock %} 

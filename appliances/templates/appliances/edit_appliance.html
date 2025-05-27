@@ -1,0 +1,108 @@
+{% extends 'appliances/base.html' %}
+
+{% block content %}
+<h2>Edit Appliance: {{ appliance.name }}</h2>
+
+<form method="POST" enctype="multipart/form-data" class="edit-appliance-form">
+    {% csrf_token %}
+    {{ form.as_p }}
+
+    {% if appliance.image %}
+        <div class="current-image">
+            <p><strong>Current Image:</strong></p>
+            <img src="{{ appliance.image.url }}" alt="{{ appliance.name }}" style="max-width: 200px; margin: 10px 0;">
+        </div>
+    {% endif %}
+
+    <button type="submit" class="btn-primary" aria-label="Save Changes">
+        Save Changes
+    </button>
+</form>
+
+<a href="{% url 'category_appliances' appliance.category.id %}" class="btn-back" aria-label="Back">⬅ Back</a>
+
+<style>
+    h2 {
+        color: #2c3e50;
+        font-weight: 700;
+        margin-bottom: 1.5rem;
+        font-size: 2rem;
+    }
+
+    .edit-appliance-form {
+        max-width: 600px;
+        margin-top: 20px;
+    }
+    .edit-appliance-form p {
+        margin-bottom: 1rem;
+        font-size: 1rem;
+        color: #34495e;
+    }
+    .edit-appliance-form label {
+        font-weight: 600;
+        display: block;
+        margin-bottom: 0.3rem;
+        color: #2c3e50;
+    }
+    .edit-appliance-form input,
+    .edit-appliance-form select,
+    .edit-appliance-form textarea {
+        width: 100%;
+        padding: 8px 12px;
+        border: 2px solid #ccc;
+        border-radius: 6px;
+        font-size: 1rem;
+        transition: border-color 0.3s ease;
+        font-family: inherit;
+    }
+    .edit-appliance-form input:focus,
+    .edit-appliance-form select:focus,
+    .edit-appliance-form textarea:focus {
+        border-color: #2874a6;
+        outline: none;
+        box-shadow: 0 0 5px #2874a6aa;
+    }
+
+    /* File input styling */
+    .edit-appliance-form input[type="file"] {
+        padding: 6px;
+        border: 2px dashed #ccc;
+        background-color: #f8f9fa;
+        cursor: pointer;
+    }
+    .edit-appliance-form input[type="file"]:hover {
+        border-color: #2874a6;
+        background-color: #e8f4f8;
+    }
+
+    .current-image {
+        margin: 1rem 0;
+        padding: 1rem;
+        background: #f8f9fa;
+        border-radius: 8px;
+        border: 1px solid #e1e8ed;
+    }
+
+    .current-image img {
+        border-radius: 4px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .btn-primary {
+        margin-top: 1.5rem;
+        background: linear-gradient(135deg, #5dade2, #2874a6);
+        color: white;
+        border: none;
+        padding: 12px 24px;
+        font-weight: 600;
+        font-size: 1.1rem;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    .btn-primary:hover {
+        background: linear-gradient(135deg, #2874a6, #1b4f72);
+        transform: translateY(-2px);
+    }
+</style>
+{% endblock %} 

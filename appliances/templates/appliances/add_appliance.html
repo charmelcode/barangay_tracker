@@ -1,0 +1,179 @@
+{% extends 'appliances/base.html' %}
+
+{% block content %}
+<h2>Add Appliance</h2>
+
+<form method="POST" enctype="multipart/form-data" class="add-appliance-form">
+    {% csrf_token %}
+    {{ form.as_p }}
+
+    <button type="submit" class="btn-primary" aria-label="Add Appliance">
+        Add Appliance
+    </button>
+</form>
+
+<a href="{% url 'borrow_requests_list' %}" class="btn-back" aria-label="Back to Home">⬅ Back</a>
+
+<style>
+    /* Form styling */
+    .add-appliance-form {
+        max-width: 600px;
+        margin-top: 20px;
+    }
+    .add-appliance-form p {
+        margin-bottom: 1rem;
+        font-size: 1rem;
+        color: #34495e;
+    }
+    .add-appliance-form label {
+        font-weight: 600;
+        display: block;
+        margin-bottom: 0.3rem;
+        color: #2c3e50;
+    }
+    .add-appliance-form input,
+    .add-appliance-form select,
+    .add-appliance-form textarea {
+        width: 100%;
+        padding: 8px 12px;
+        border: 2px solid #ccc;
+        border-radius: 6px;
+        font-size: 1rem;
+        transition: border-color 0.3s ease;
+        font-family: inherit;
+    }
+    .add-appliance-form input:focus,
+    .add-appliance-form select:focus,
+    .add-appliance-form textarea:focus {
+        border-color: #2874a6;
+        outline: none;
+        box-shadow: 0 0 5px #2874a6aa;
+    }
+
+    /* File input styling */
+    .add-appliance-form input[type="file"] {
+        padding: 6px;
+        border: 2px dashed #ccc;
+        background-color: #f8f9fa;
+        cursor: pointer;
+    }
+    .add-appliance-form input[type="file"]:hover {
+        border-color: #2874a6;
+        background-color: #e8f4f8;
+    }
+
+    /* Submit button */
+    .add-appliance-form button.btn-primary {
+        margin-top: 1.5rem;
+        background: linear-gradient(135deg, #5dade2, #2874a6);
+        color: white;
+        border: 2px solid transparent;
+        padding: 12px 24px;
+        font-weight: 700;
+        font-size: 1.1rem;
+        border-radius: 8px;
+        cursor: pointer;
+        box-shadow: 0 6px 12px rgba(41, 128, 185, 0.5);
+        position: relative;
+        overflow: hidden;
+        transition:
+            background 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+            box-shadow 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+            transform 0.15s cubic-bezier(0.4, 0, 0.2, 1),
+            border-color 0.4s ease;
+        user-select: none;
+        display: inline-block;
+    }
+    .add-appliance-form button.btn-primary:hover {
+        background: linear-gradient(135deg, #2874a6, #1b4f72);
+        box-shadow: 0 8px 16px rgba(27, 79, 114, 0.7), 0 0 8px #1b4f72aa;
+        transform: translateY(-3px);
+        border-color: #1b4f72;
+    }
+    .add-appliance-form button.btn-primary:active {
+        background: linear-gradient(135deg, #1b4f72, #145374);
+        box-shadow: 0 4px 8px rgba(20, 83, 116, 0.9);
+        transform: scale(0.96);
+        border-color: #145374;
+    }
+    .add-appliance-form button.btn-primary:focus-visible {
+        outline: 3px solid #2980b9;
+        outline-offset: 3px;
+    }
+
+    /* Back button */
+    a.btn-back {
+        margin-top: 24px;
+        display: inline-block;
+        padding: 12px 24px;
+        font-weight: 700;
+        font-size: 1.1rem;
+        border-radius: 8px;
+        cursor: pointer;
+        text-decoration: none;
+        color: #ffffff;
+        border: 2px solid #2874a6;
+        background-color: #2980b9;
+        box-shadow: 0 4px 10px rgba(40, 116, 166, 0.3);
+        transition:
+            background-color 0.3s ease,
+            color 0.3s ease,
+            box-shadow 0.3s ease,
+            transform 0.15s ease;
+        user-select: none;
+        font-family: inherit;
+    }
+    a.btn-back:hover {
+        background-color: #2874a6;
+        color: white;
+        box-shadow: 0 8px 20px rgba(40, 116, 166, 0.6);
+        transform: translateY(-3px);
+    }
+    a.btn-back:active {
+        background-color: #1b4f72;
+        box-shadow: 0 4px 10px rgba(27, 79, 114, 0.9);
+        transform: scale(0.96);
+    }
+    a.btn-back:focus-visible {
+        outline: 3px solid #2980b9;
+        outline-offset: 3px;
+    }
+
+    /* Ripple effect */
+    .ripple {
+        position: absolute;
+        border-radius: 50%;
+        transform: scale(0);
+        animation: ripple-animation 600ms linear;
+        background-color: rgba(255, 255, 255, 0.7);
+        pointer-events: none;
+        z-index: 10;
+    }
+    @keyframes ripple-animation {
+        to {
+            transform: scale(4);
+            opacity: 0;
+        }
+    }
+</style>
+
+<script>
+    // Ripple effect on submit button
+    document.querySelectorAll('.add-appliance-form button.btn-primary, a.btn-back').forEach(el => {
+        el.addEventListener('click', function (e) {
+            const rect = el.getBoundingClientRect();
+            const ripple = document.createElement('span');
+            ripple.classList.add('ripple');
+            ripple.style.width = ripple.style.height = Math.max(rect.width, rect.height) + 'px';
+            ripple.style.left = (e.clientX - rect.left - ripple.offsetWidth / 2) + 'px';
+            ripple.style.top = (e.clientY - rect.top - ripple.offsetHeight / 2) + 'px';
+
+            el.appendChild(ripple);
+
+            ripple.addEventListener('animationend', () => {
+                ripple.remove();
+            });
+        });
+    });
+</script>
+{% endblock %}

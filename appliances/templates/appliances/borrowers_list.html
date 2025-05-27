@@ -1,0 +1,360 @@
+{% extends 'appliances/base.html' %}
+{% load custom_filters %}
+
+{% block content %}
+<div class="borrowers-container">
+    <h2>Borrowers List</h2>
+
+    {% if borrow_requests %}
+        <div class="borrowers-grid">
+            {% for request in borrow_requests %}
+                <div class="borrower-card">
+                    <div class="borrower-header">
+                        <h3>{{ request.full_name }}</h3>
+                        <span class="borrow-date">Borrowed on: {{ request.borrow_date|date:"F d, Y" }}</span>
+                    </div>
+                    
+                    <div class="borrower-details">
+                        <p><strong>Contact:</strong> {{ request.contact_number }}</p>
+                        <p><strong>Location:</strong> {{ request.location }}</p>
+                        <p><strong>Appliance:</strong> {{ request.appliance.name }}</p>
+                        <p><strong>Total Borrowed:</strong> {{ request.quantity }}</p>
+                        
+                        {% if request.returned_quantity > 0 %}
+                            <div class="return-details">
+                                <div class="return-summary-header">
+                                    <h4>Return Summary</h4>
+                                    <p><strong>Total Returned:</strong> {{ request.returned_quantity }}</p>
+                                </div>
+                                
+                                <div class="return-totals">
+                                    <div class="total-box good">
+                                        <span class="total-label">Total Good</span>
+                                        <span class="total-number">
+                                            {% if request.resolution_status.damaged_count %}
+                                                {{ request.returned_quantity|sub:request.resolution_status.damaged_count }}
+                                            {% else %}
+                                                {{ request.returned_quantity }}
+                                            {% endif %}
+                                        </span>
+                                        <span class="total-icon">✅</span>
+                                    </div>
+                                    <div class="total-box damaged">
+                                        <span class="total-label">Total Damaged</span>
+                                        <span class="total-number">
+                                            {% if request.resolution_status.damaged_count %}
+                                                {{ request.resolution_status.damaged_count }}
+                                            {% else %}
+                                                0
+                                            {% endif %}
+                                        </span>
+                                        <span class="total-icon">🔧</span>
+                                    </div>
+                                </div>
+                                
+                                {% if request.resolution_status.damaged_count and request.resolution_status.damaged_count > 0 %}
+                                    <div class="resolution-section">
+                                        <h4>Resolution Details</h4>
+                                        <div class="resolution-box {{ request.resolution_status.resolution|default:'pending' }}">
+                                            <div class="resolution-header">
+                                                <span class="resolution-type">
+                                                    {% if request.resolution_status.resolution == 'replaced' %}
+                                                        Will Replace
+                                                        <span class="resolution-icon">🔄</span>
+                                                    {% elif request.resolution_status.resolution == 'paid' %}
+                                                        Will Pay
+                                                        <span class="resolution-icon">💰</span>
+                                                    {% else %}
+                                                        Pending Decision
+                                                        <span class="resolution-icon">⏳</span>
+                                                    {% endif %}
+                                                </span>
+                                                <span class="damaged-count">{{ request.resolution_status.damaged_count }} items</span>
+                                            </div>
+                                            {% if request.resolution_status.notes %}
+                                                <div class="resolution-notes">
+                                                    <p>{{ request.resolution_status.notes }}</p>
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        {% endif %}
+                        
+                        {% if request.unreturned_quantity > 0 %}
+                            <div class="unreturned-details">
+                                <p><strong>Remaining to Return:</strong> {{ request.unreturned_quantity }}</p>
+                            </div>
+                        {% endif %}
+
+                        {% if request.planned_return_date %}
+                            <p><strong>Planned Return:</strong> {{ request.planned_return_date|date:"F d, Y" }}</p>
+                        {% endif %}
+                        
+                        {% if request.return_date %}
+                            <p><strong>Actual Return Date:</strong> {{ request.return_date|date:"F d, Y" }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p class="no-borrowers">No borrowers found.</p>
+    {% endif %}
+
+    <div class="actions">
+        <a href="{% url 'home' %}" class="btn-back">Back to Home</a>
+    </div>
+</div>
+
+<style>
+    .borrowers-container {
+        max-width: 1200px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+    }
+
+    .borrowers-container h2 {
+        color: #2c3e50;
+        margin-bottom: 2rem;
+        font-size: 2rem;
+        font-weight: 700;
+    }
+
+    .borrowers-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+        gap: 1.5rem;
+    }
+
+    .borrower-card {
+        background: white;
+        border-radius: 10px;
+        padding: 1.5rem;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .borrower-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+    }
+
+    .borrower-header {
+        margin-bottom: 1rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid #eee;
+    }
+
+    .borrower-header h3 {
+        color: #2c3e50;
+        margin: 0;
+        font-size: 1.25rem;
+        font-weight: 600;
+    }
+
+    .borrow-date {
+        display: block;
+        font-size: 0.9rem;
+        color: #666;
+        margin-top: 0.5rem;
+    }
+
+    .borrower-details p {
+        margin: 0.5rem 0;
+        color: #444;
+    }
+
+    .return-details {
+        margin: 1rem 0;
+        padding: 1rem;
+        background: #f8f9fa;
+        border-radius: 8px;
+        border: 1px solid #e9ecef;
+    }
+
+    .return-summary-header {
+        margin-bottom: 1rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 1px solid #e9ecef;
+    }
+
+    .return-summary-header h4 {
+        color: #2c3e50;
+        margin: 0 0 0.5rem 0;
+        font-size: 1.1rem;
+        font-weight: 600;
+    }
+
+    .return-totals {
+        display: flex;
+        gap: 1rem;
+        margin: 1rem 0;
+    }
+
+    .total-box {
+        flex: 1;
+        padding: 1rem;
+        border-radius: 8px;
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .total-box.good {
+        background: #d4edda;
+        border: 1px solid #c3e6cb;
+    }
+
+    .total-box.damaged {
+        background: #f8d7da;
+        border: 1px solid #f5c6cb;
+    }
+
+    .total-label {
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: #2c3e50;
+    }
+
+    .total-number {
+        font-size: 1.5rem;
+        font-weight: 700;
+    }
+
+    .total-box.good .total-number {
+        color: #155724;
+    }
+
+    .total-box.damaged .total-number {
+        color: #721c24;
+    }
+
+    .resolution-section {
+        margin-top: 1.5rem;
+        padding-top: 1rem;
+        border-top: 1px solid #e9ecef;
+    }
+
+    .resolution-section h4 {
+        color: #2c3e50;
+        margin: 0 0 1rem 0;
+        font-size: 1.1rem;
+        font-weight: 600;
+    }
+
+    .resolution-box {
+        padding: 1rem;
+        border-radius: 8px;
+        background: white;
+        border: 1px solid #e9ecef;
+    }
+
+    .resolution-box.replaced {
+        border-left: 4px solid #28a745;
+    }
+
+    .resolution-box.paid {
+        border-left: 4px solid #007bff;
+    }
+
+    .resolution-box.pending {
+        border-left: 4px solid #ffc107;
+    }
+
+    .resolution-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 0.5rem;
+    }
+
+    .resolution-type {
+        font-weight: 600;
+        color: #2c3e50;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .damaged-count {
+        font-size: 0.9rem;
+        color: #721c24;
+        background: #f8d7da;
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+        border: 1px solid #f5c6cb;
+    }
+
+    .resolution-icon {
+        font-size: 1.2rem;
+    }
+
+    .resolution-notes {
+        margin-top: 0.5rem;
+        padding-top: 0.5rem;
+        border-top: 1px solid #e9ecef;
+        font-size: 0.9rem;
+        color: #666;
+    }
+
+    .unreturned-details {
+        margin: 1rem 0;
+        padding: 1rem;
+        background: #fff3cd;
+        border: 1px solid #ffeeba;
+        border-radius: 8px;
+        color: #856404;
+    }
+
+    .no-borrowers {
+        text-align: center;
+        color: #666;
+        font-style: italic;
+        padding: 2rem;
+    }
+
+    .actions {
+        margin-top: 2rem;
+        text-align: center;
+    }
+
+    .btn-back {
+        display: inline-block;
+        padding: 0.75rem 1.5rem;
+        background-color: #3498db;
+        color: white;
+        text-decoration: none;
+        border-radius: 5px;
+        transition: all 0.3s ease;
+    }
+
+    .btn-back:hover {
+        background-color: #2980b9;
+        transform: translateY(-2px);
+    }
+
+    @media (max-width: 768px) {
+        .borrowers-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .return-totals {
+            flex-direction: column;
+        }
+        
+        .total-box {
+            flex-direction: row;
+            justify-content: space-between;
+            padding: 0.75rem;
+        }
+        
+        .total-number {
+            font-size: 1.2rem;
+        }
+    }
+</style>
+{% endblock %} 
